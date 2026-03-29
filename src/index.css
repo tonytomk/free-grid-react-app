@@ -3,3 +3,28 @@ body {
   background-color: #f3f4f6;
   min-height: 100vh;
 }
+
+.striped-grid .free-grid-body > .free-grid-row:nth-child(odd) {
+  background: linear-gradient(90deg, rgba(236, 72, 153, 0.08) 0%, rgba(59, 130, 246, 0.03) 100%);
+}
+
+.striped-grid .free-grid-body > .free-grid-row:nth-child(even) {
+  background: linear-gradient(90deg, rgba(34, 197, 94, 0.1) 0%, rgba(251, 191, 36, 0.06) 100%);
+}
+
+.striped-grid .free-grid-body > .free-grid-row:hover {
+  background: linear-gradient(90deg, rgba(14, 165, 233, 0.16) 0%, rgba(168, 85, 247, 0.1) 100%);
+}
+
+.striped-grid .free-grid-header,
+.striped-grid .free-grid-footer {
+  background: linear-gradient(90deg, #ffffff 0%, #fff1f2 100%);
+}
+
+.striped-grid .free-grid-header {
+  color: #be185d;
+}
+
+.striped-grid .free-grid-row {
+  border-bottom-color: rgba(236, 72, 153, 0.14);
+}

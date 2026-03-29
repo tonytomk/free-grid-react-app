@@ -11,30 +11,185 @@ interface Product {
   description: string;
 }
 
+interface ProductSnapshot {
+  id: number;
+  product: string;
+  category: string;
+  stock: number;
+  price: number;
+  health: string;
+}
+
+interface ActivityRow {
+  id: number;
+  lane: string;
+  owner: string;
+  priority: string;
+  status: string;
+}
+
 const mockProducts: Product[] = [
   { id: 1, name: 'Premium Wireless Headphones', category: 'Electronics', price: 299.99, stock: 45, description: 'High-fidelity audio with active noise cancellation.' },
-  { id: 2, name: 'Ergonomic Office Chair', category: 'Furniture', price: 449.50, stock: 12, description: 'Adjustable lumbar support and breathable mesh.' },
-  { id: 3, name: 'Smart Home Hub', category: 'Electronics', price: 129.00, stock: 89, description: 'Centralize your smart devices with voice control.' },
+  { id: 2, name: 'Ergonomic Office Chair', category: 'Furniture', price: 449.5, stock: 12, description: 'Adjustable lumbar support and breathable mesh.' },
+  { id: 3, name: 'Smart Home Hub', category: 'Electronics', price: 129, stock: 89, description: 'Centralize your smart devices with voice control.' },
   { id: 4, name: 'Mechanical Keyboard', category: 'Accessories', price: 159.99, stock: 23, description: 'Tactile feedback and RGB backlighting.' },
-  { id: 5, name: '4K Ultra HD Monitor', category: 'Electronics', price: 599.00, stock: 15, description: 'Vibrant colors and razor-sharp clarity.' },
-  { id: 6, name: 'USB-C Docking Station', category: 'Accessories', price: 89.00, stock: 56, description: 'Expand your connectivity with multiple ports.' },
-  { id: 7, name: 'Leather Travel Backpack', category: 'Accessories', price: 199.00, stock: 34, description: 'Durable and stylish for your daily commute.' },
-  { id: 8, name: 'Smart Fitness Tracker', category: 'Wearables', price: 79.50, stock: 67, description: 'Track your steps, heart rate, and sleep.' },
+  { id: 5, name: '4K Ultra HD Monitor', category: 'Electronics', price: 599, stock: 15, description: 'Vibrant colors and razor-sharp clarity.' },
+  { id: 6, name: 'USB-C Docking Station', category: 'Accessories', price: 89, stock: 56, description: 'Expand your connectivity with multiple ports.' },
+  { id: 7, name: 'Leather Travel Backpack', category: 'Accessories', price: 199, stock: 34, description: 'Durable and stylish for your daily commute.' },
+  { id: 8, name: 'Smart Fitness Tracker', category: 'Wearables', price: 79.5, stock: 67, description: 'Track your steps, heart rate, and sleep.' },
   { id: 9, name: 'Brewed Coffee Maker', category: 'Kitchen', price: 49.99, stock: 110, description: 'Start your morning with a perfect cup of coffee.' },
+];
+
+const configuredSnapshots: ProductSnapshot[] = mockProducts.map((product) => ({
+  id: product.id,
+  product: product.name,
+  category: product.category,
+  stock: product.stock,
+  price: product.price,
+  health: product.stock >= 60 ? 'Strong' : product.stock >= 25 ? 'Steady' : 'Low',
+}));
+
+const activityRows: ActivityRow[] = [
+  { id: 101, lane: 'Checkout', owner: 'Mina', priority: 'High', status: 'Queued' },
+  { id: 102, lane: 'Shipping', owner: 'Dev', priority: 'Medium', status: 'Packed' },
+  { id: 103, lane: 'Support', owner: 'Rina', priority: 'High', status: 'Waiting' },
+  { id: 104, lane: 'Inventory', owner: 'Noah', priority: 'Low', status: 'Synced' },
+  { id: 105, lane: 'Billing', owner: 'Sara', priority: 'Medium', status: 'Review' },
+  { id: 106, lane: 'Returns', owner: 'Omar', priority: 'Low', status: 'Open' },
 ];
 
 const columns: Column<Product>[] = [
   { key: 'id', header: 'ID', width: 60, sortable: true, resizable: false },
   { key: 'name', header: 'Product Name', flex: 2, sortable: true, minWidth: 150 },
   { key: 'category', header: 'Category', flex: 1, sortable: true },
-  { 
-    key: 'price', 
-    header: 'Price', 
+  {
+    key: 'price',
+    header: 'Price',
     flex: 1,
     sortable: true,
-    render: (price: number) => `₹${price.toFixed(2)}`
+    render: (price: number) => `$${price.toFixed(2)}`,
   },
   { key: 'stock', header: 'In Stock', width: 100, sortable: true },
+];
+
+const configuredColumns: Column<ProductSnapshot>[] = [
+  { key: 'id', header: 'ID', width: 60, sortable: true, resizable: false },
+  { key: 'product', header: 'Configured Product', flex: 2, sortable: true, minWidth: 180 },
+  { key: 'category', header: 'Category', flex: 1, sortable: true },
+  {
+    key: 'health',
+    header: 'Health',
+    width: 110,
+    sortable: true,
+    render: (health: string) => (
+      <span
+        style={{
+          display: 'inline-flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          minWidth: '78px',
+          padding: '4px 10px',
+          borderRadius: '999px',
+          backgroundColor: health === 'Strong' ? '#f97316' : health === 'Steady' ? '#22c55e' : '#a855f7',
+          color: '#ffffff',
+          fontSize: '0.75rem',
+          fontWeight: 700,
+          letterSpacing: '0.02em',
+          boxShadow: '0 8px 18px -10px rgba(0, 0, 0, 0.8)',
+        }}
+      >
+        {health}
+      </span>
+    ),
+  },
+  { key: 'stock', header: 'Stock', width: 90, sortable: true },
+  {
+    key: 'price',
+    header: 'Price',
+    width: 110,
+    sortable: true,
+    render: (price: number) => `$${price.toFixed(2)}`,
+  },
+];
+
+const activityColumns: Column<ActivityRow>[] = [
+  {
+    key: 'id',
+    header: 'Ticket',
+    width: 80,
+    sortable: true,
+    resizable: false,
+    render: (value: number) => <strong style={{ color: '#0f172a' }}>{value}</strong>,
+  },
+  { key: 'lane', header: 'Lane', flex: 1, sortable: true },
+  {
+    key: 'owner',
+    header: 'Owner',
+    width: 100,
+    sortable: true,
+    render: (value: string) => (
+      <span style={{ color: '#0f172a', fontWeight: 700, letterSpacing: '0.01em' }}>{value}</span>
+    ),
+  },
+  {
+    key: 'priority',
+    header: 'Priority',
+    width: 120,
+    sortable: true,
+    render: (value: string) => (
+      <span
+        style={{
+          display: 'inline-flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          minWidth: '76px',
+          padding: '4px 10px',
+          borderRadius: '999px',
+          backgroundColor: value === 'High' ? '#ef4444' : value === 'Medium' ? '#f59e0b' : '#38bdf8',
+          color: '#fff',
+          fontSize: '0.75rem',
+          fontWeight: 800,
+          boxShadow: '0 8px 18px -10px rgba(0, 0, 0, 0.45)',
+        }}
+      >
+        {value}
+      </span>
+    ),
+  },
+  {
+    key: 'status',
+    header: 'Status',
+    flex: 1,
+    sortable: true,
+    render: (value: string) => (
+      <span
+        style={{
+          display: 'inline-flex',
+          alignItems: 'center',
+          padding: '4px 10px',
+          borderRadius: '999px',
+          backgroundColor:
+            value === 'Queued'
+              ? '#f43f5e'
+              : value === 'Packed'
+                ? '#14b8a6'
+                : value === 'Waiting'
+                  ? '#8b5cf6'
+                  : value === 'Synced'
+                    ? '#22c55e'
+                    : value === 'Review'
+                      ? '#f97316'
+                      : '#0f172a',
+          color: '#fff',
+          fontSize: '0.75rem',
+          fontWeight: 700,
+          boxShadow: '0 8px 18px -10px rgba(0, 0, 0, 0.45)',
+        }}
+      >
+        {value}
+      </span>
+    ),
+  },
 ];
 
 function App() {
@@ -42,67 +197,191 @@ function App() {
   const [showHeader, setShowHeader] = useState(true);
 
   return (
-    <div style={{ padding: '40px', maxWidth: '1000px', margin: '0 auto', fontFamily: 'Inter, system-ui, Avenir, Helvetica, Arial, sans-serif' }}>
-      <header style={{ marginBottom: '32px' }}>
-        <h1 style={{ fontSize: '2rem', color: '#1a1a1b', margin: '0 0 8px 0' }}>Data Grid Pro Demo</h1>
-        <p style={{ color: '#666', fontSize: '1.1rem' }}>
-          Showcasing the latest features of <code>free-grid-react</code>: sorting, reordering, and resizing.
-        </p>
-      </header>
+    <div
+      style={{
+        minHeight: '100vh',
+        padding: '40px 24px 56px',
+        background: 'radial-gradient(circle at top, #f8fafc 0%, #edf2f7 45%, #e2e8f0 100%)',
+      }}
+    >
+      <div style={{ maxWidth: '1120px', margin: '0 auto' }}>
+        <header style={{ marginBottom: '32px' }}>
+          <p style={{ margin: '0 0 8px 0', textTransform: 'uppercase', letterSpacing: '0.14em', fontSize: '0.75rem', color: '#475569' }}>
+            free-grid-react 0.2.6
+          </p>
+          <h1 style={{ fontSize: 'clamp(2rem, 5vw, 3.5rem)', color: '#0f172a', margin: '0 0 12px 0', lineHeight: 1.05 }}>
+            Data Grid Pro Demo
+          </h1>
+          <p style={{ color: '#475569', fontSize: '1.05rem', maxWidth: '740px', margin: 0 }}>
+            The latest release adds built-in surface colors, so the second grid now uses the library&apos;s dark theme props.
+            The third grid layers on striped rows for a different visual treatment.
+          </p>
+        </header>
 
-      <div style={{ marginBottom: '20px', display: 'flex', gap: '12px', alignItems: 'center' }}>
-        <button
-          onClick={() => setShowHeader(!showHeader)}
+        <div style={{ marginBottom: '20px', display: 'flex', gap: '12px', alignItems: 'center', flexWrap: 'wrap' }}>
+          <button
+            onClick={() => setShowHeader(!showHeader)}
+            style={{
+              padding: '8px 16px',
+              borderRadius: '999px',
+              border: '1px solid #cbd5e1',
+              backgroundColor: 'white',
+              cursor: 'pointer',
+              fontSize: '0.875rem',
+              fontWeight: 600,
+              transition: 'all 0.2s',
+              boxShadow: '0 1px 2px 0 rgb(0 0 0 / 0.05)',
+            }}
+            onMouseOver={(e) => {
+              e.currentTarget.style.backgroundColor = '#f8fafc';
+            }}
+            onMouseOut={(e) => {
+              e.currentTarget.style.backgroundColor = 'white';
+            }}
+          >
+            {showHeader ? 'Hide Header' : 'Show Header'}
+          </button>
+          <span style={{ fontSize: '0.875rem', color: '#64748b' }}>
+            Sort, reorder, resize, and compare the three layouts.
+          </span>
+        </div>
+
+        <section
           style={{
-            padding: '8px 16px',
-            borderRadius: '6px',
-            border: '1px solid #e5e7eb',
-            backgroundColor: 'white',
-            cursor: 'pointer',
-            fontSize: '0.875rem',
-            fontWeight: 500,
-            transition: 'all 0.2s',
-            boxShadow: '0 1px 2px 0 rgb(0 0 0 / 0.05)'
+            backgroundColor: '#fff',
+            borderRadius: '16px',
+            boxShadow: '0 20px 40px -24px rgb(15 23 42 / 0.35)',
+            overflow: 'hidden',
+            marginBottom: '28px',
+            borderTop: '6px solid #2563eb',
           }}
-          onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#f9fafb'}
-          onMouseOut={(e) => e.currentTarget.style.backgroundColor = 'white'}
         >
-          {showHeader ? 'Hide Header' : 'Show Header'}
-        </button>
-        <span style={{ fontSize: '0.875rem', color: '#6b7280' }}>
-          Try dragging headers to reorder or resizing columns!
-        </span>
-      </div>
+          <div style={{ padding: '18px 20px 0 20px' }}>
+            <h2 style={{ margin: 0, fontSize: '1.125rem', color: '#2563eb' }}>Classic product grid</h2>
+            <p style={{ margin: '4px 0 0', color: '#475569', fontSize: '0.9rem' }}>
+              Sorting, selection, row expansion, and pagination are all enabled here.
+            </p>
+          </div>
+          <Grid
+            data={mockProducts}
+            columns={columns}
+            showHeader={showHeader}
+            selectable={true}
+            selectedIds={selectedIds}
+            onSelectionChange={setSelectedIds}
+            allowSorting={true}
+            allowReordering={true}
+            allowResizing={true}
+            pagination={{
+              total: mockProducts.length,
+              page: 1,
+              pageSize: 5,
+            }}
+            renderChildView={(product: Product) => (
+              <div style={{ padding: '16px', backgroundColor: '#f8fafc', color: '#475569' }}>
+                <h4 style={{ margin: '0 0 8px 0', color: '#0f172a' }}>Product Description</h4>
+                <p style={{ margin: 0 }}>{product.description}</p>
+              </div>
+            )}
+          />
+        </section>
 
-      <section style={{ backgroundColor: '#fff', borderRadius: '8px', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)', overflow: 'hidden' }}>
-        <Grid
-          data={mockProducts}
-          columns={columns}
-          showHeader={showHeader}
-          selectable={true}
-          selectedIds={selectedIds}
-          onSelectionChange={setSelectedIds}
-          allowSorting={true}
-          allowReordering={true}
-          allowResizing={true}
-          pagination={{
-            total: mockProducts.length,
-            page: 1,
-            pageSize: 5
+        <section
+          style={{
+            backgroundColor: '#09090b',
+            borderRadius: '16px',
+            boxShadow: '0 20px 40px -24px rgb(0 0 0 / 0.55)',
+            overflow: 'hidden',
+            marginBottom: '28px',
+            borderTop: '6px solid #f59e0b',
           }}
-          renderChildView={(product: Product) => (
-            <div style={{ padding: '16px', backgroundColor: '#f9fafb', color: '#4b5563' }}>
-              <h4 style={{ margin: '0 0 8px 0', color: '#111827' }}>Product Description</h4>
-              <p style={{ margin: 0 }}>{product.description}</p>
-            </div>
-          )}
-        />
-      </section>
+        >
+          <div style={{ padding: '18px 20px 0 20px' }}>
+            <h2 style={{ margin: 0, fontSize: '1.125rem', color: '#fbbf24' }}>Dark built-in theme grid</h2>
+            <p style={{ margin: '4px 0 0', color: '#f4f4f5', fontSize: '0.9rem' }}>
+              This one uses the new `gridColor` and `gridTextColor` props from `free-grid-react@0.2.6`.
+            </p>
+          </div>
+          <Grid
+            data={configuredSnapshots}
+            columns={configuredColumns}
+            showHeader={true}
+            selectable={false}
+            allowSorting={true}
+            allowReordering={true}
+            allowResizing={true}
+            gridColor="#0a0a0b"
+            gridTextColor="#f4f4f5"
+            pagination={{
+              total: configuredSnapshots.length,
+              page: 1,
+              pageSize: 4,
+            }}
+          />
+        </section>
 
-      <footer style={{ marginTop: '24px', color: '#888', fontSize: '0.9rem', display: 'flex', justifyContent: 'space-between' }}>
-        <span>{selectedIds.length} item(s) selected.</span>
-        <span>Version 0.2.3</span>
-      </footer>
+        <section
+          style={{
+            backgroundColor: '#ffffff',
+            borderRadius: '16px',
+            boxShadow: '0 20px 40px -24px rgb(15 23 42 / 0.25)',
+            overflow: 'hidden',
+            borderTop: '6px solid #ec4899',
+          }}
+        >
+          <div style={{ padding: '18px 20px 0 20px' }}>
+            <h2 style={{ margin: 0, fontSize: '1.125rem', color: '#db2777' }}>Striped activity grid</h2>
+            <p style={{ margin: '4px 0 0', color: '#6b7280', fontSize: '0.9rem' }}>
+              A third grid with alternate row striping through scoped CSS, separate from the library theme props.
+            </p>
+          </div>
+          <Grid
+            className="striped-grid"
+            data={activityRows}
+            columns={activityColumns}
+            showHeader={true}
+            selectable={false}
+            allowSorting={true}
+            allowReordering={true}
+            allowResizing={true}
+            pagination={{
+              total: activityRows.length,
+              page: 1,
+              pageSize: 6,
+            }}
+          />
+        </section>
+
+        <footer
+          style={{
+            marginTop: '24px',
+            paddingTop: '16px',
+            borderTop: '1px solid rgba(148, 163, 184, 0.25)',
+            color: '#64748b',
+            fontSize: '0.95rem',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            textAlign: 'center',
+          }}
+        >
+          <span>
+            Copyright ©{' '}
+            <a
+              href="https://tonytomk.github.io"
+              target="_blank"
+              rel="noreferrer"
+              style={{
+                color: '#f59e0b',
+                fontWeight: 700,
+                textDecoration: 'none',
+              }}
+            >
+              Tony Tom K
+            </a>
+          </span>
+        </footer>
+      </div>
     </div>
   );
 }
