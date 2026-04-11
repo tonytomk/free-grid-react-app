@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Grid, type Column } from 'free-grid-react';
 import 'free-grid-react/free-grid.css';
+import { FREE_GRID_REACT_VERSION } from './version';
 
 interface Product {
   id: number;
@@ -260,7 +261,7 @@ function App() {
       <div style={{ maxWidth: '1120px', margin: '0 auto' }}>
         <header style={{ marginBottom: '32px' }}>
           <p style={{ margin: '0 0 8px 0', textTransform: 'uppercase', letterSpacing: '0.14em', fontSize: '0.75rem', color: '#475569' }}>
-            free-grid-react 0.2.7
+            free-grid-react {FREE_GRID_REACT_VERSION}
           </p>
           <h1 style={{ fontSize: 'clamp(2rem, 5vw, 3.5rem)', color: '#0f172a', margin: '0 0 12px 0', lineHeight: 1.05 }}>
             Free grid react demo
