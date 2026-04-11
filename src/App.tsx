@@ -28,6 +28,14 @@ interface ActivityRow {
   status: string;
 }
 
+interface SelectionRow {
+  id: number;
+  task: string;
+  owner: string;
+  progress: string;
+  updated: string;
+}
+
 const mockProducts: Product[] = [
   { id: 1, name: 'Premium Wireless Headphones', category: 'Electronics', price: 299.99, stock: 45, description: 'High-fidelity audio with active noise cancellation.' },
   { id: 2, name: 'Ergonomic Office Chair', category: 'Furniture', price: 449.5, stock: 12, description: 'Adjustable lumbar support and breathable mesh.' },
@@ -56,6 +64,13 @@ const activityRows: ActivityRow[] = [
   { id: 104, lane: 'Inventory', owner: 'Noah', priority: 'Low', status: 'Synced' },
   { id: 105, lane: 'Billing', owner: 'Sara', priority: 'Medium', status: 'Review' },
   { id: 106, lane: 'Returns', owner: 'Omar', priority: 'Low', status: 'Open' },
+];
+
+const selectionRows: SelectionRow[] = [
+  { id: 201, task: 'Homepage refresh', owner: 'Aria', progress: 'In review', updated: '2h ago' },
+  { id: 202, task: 'Checkout polish', owner: 'Mason', progress: 'Ready', updated: '1h ago' },
+  { id: 203, task: 'Dark mode QA', owner: 'Nina', progress: 'Blocked', updated: '35m ago' },
+  { id: 204, task: 'Analytics cards', owner: 'Leo', progress: 'On track', updated: '12m ago' },
 ];
 
 const columns: Column<Product>[] = [
@@ -192,8 +207,46 @@ const activityColumns: Column<ActivityRow>[] = [
   },
 ];
 
+const selectionColumns: Column<SelectionRow>[] = [
+  { key: 'id', header: 'ID', width: 70, sortable: true, resizable: false },
+  { key: 'task', header: 'Task', flex: 2, sortable: true, minWidth: 160 },
+  { key: 'owner', header: 'Owner', width: 100, sortable: true },
+  {
+    key: 'progress',
+    header: 'Progress',
+    width: 120,
+    sortable: true,
+    render: (value: string) => (
+      <span
+        style={{
+          display: 'inline-flex',
+          alignItems: 'center',
+          padding: '4px 10px',
+          borderRadius: '999px',
+          backgroundColor:
+            value === 'Ready'
+              ? '#22c55e'
+              : value === 'Blocked'
+                ? '#ef4444'
+                : value === 'On track'
+                  ? '#3b82f6'
+                  : '#a855f7',
+          color: '#fff',
+          fontSize: '0.75rem',
+          fontWeight: 800,
+          boxShadow: '0 8px 18px -10px rgba(0, 0, 0, 0.45)',
+        }}
+      >
+        {value}
+      </span>
+    ),
+  },
+  { key: 'updated', header: 'Updated', width: 100, sortable: true },
+];
+
 function App() {
   const [selectedIds, setSelectedIds] = useState<(string | number)[]>([]);
+  const [singleSelectedIds, setSingleSelectedIds] = useState<(string | number)[]>([]);
   const [showHeader, setShowHeader] = useState(true);
 
   return (
@@ -207,14 +260,14 @@ function App() {
       <div style={{ maxWidth: '1120px', margin: '0 auto' }}>
         <header style={{ marginBottom: '32px' }}>
           <p style={{ margin: '0 0 8px 0', textTransform: 'uppercase', letterSpacing: '0.14em', fontSize: '0.75rem', color: '#475569' }}>
-            free-grid-react 0.2.6
+            free-grid-react 0.2.7
           </p>
           <h1 style={{ fontSize: 'clamp(2rem, 5vw, 3.5rem)', color: '#0f172a', margin: '0 0 12px 0', lineHeight: 1.05 }}>
-            Data Grid Pro Demo
+            Free grid react demo
           </h1>
           <p style={{ color: '#475569', fontSize: '1.05rem', maxWidth: '740px', margin: 0 }}>
-            The latest release adds built-in surface colors, so the second grid now uses the library&apos;s dark theme props.
-            The third grid layers on striped rows for a different visual treatment.
+            The latest release adds built-in themes and striped rows, plus a dedicated single-select example to show
+            row selection control in action.
           </p>
         </header>
 
@@ -272,6 +325,8 @@ function App() {
             allowSorting={true}
             allowReordering={true}
             allowResizing={true}
+            rowHeight={56}
+            theme="light"
             pagination={{
               total: mockProducts.length,
               page: 1,
@@ -299,7 +354,7 @@ function App() {
           <div style={{ padding: '18px 20px 0 20px' }}>
             <h2 style={{ margin: 0, fontSize: '1.125rem', color: '#fbbf24' }}>Dark built-in theme grid</h2>
             <p style={{ margin: '4px 0 0', color: '#f4f4f5', fontSize: '0.9rem' }}>
-              This one uses the new `gridColor` and `gridTextColor` props from `free-grid-react@0.2.6`.
+              This one uses the new `theme="dark"` prop from `free-grid-react@0.2.7`.
             </p>
           </div>
           <Grid
@@ -310,8 +365,8 @@ function App() {
             allowSorting={true}
             allowReordering={true}
             allowResizing={true}
-            gridColor="#0a0a0b"
-            gridTextColor="#f4f4f5"
+            theme="dark"
+            rowHeight={56}
             pagination={{
               total: configuredSnapshots.length,
               page: 1,
@@ -332,11 +387,10 @@ function App() {
           <div style={{ padding: '18px 20px 0 20px' }}>
             <h2 style={{ margin: 0, fontSize: '1.125rem', color: '#db2777' }}>Striped activity grid</h2>
             <p style={{ margin: '4px 0 0', color: '#6b7280', fontSize: '0.9rem' }}>
-              A third grid with alternate row striping through scoped CSS, separate from the library theme props.
+              A third grid with alternate row striping using the built-in striped row props.
             </p>
           </div>
           <Grid
-            className="striped-grid"
             data={activityRows}
             columns={activityColumns}
             showHeader={true}
@@ -344,10 +398,51 @@ function App() {
             allowSorting={true}
             allowReordering={true}
             allowResizing={true}
+            stripedRows={true}
+            stripedRowOddColor="#fff1f2"
+            stripedRowEvenColor="#eef2ff"
+            rowHeight={56}
             pagination={{
               total: activityRows.length,
               page: 1,
               pageSize: 6,
+            }}
+          />
+        </section>
+
+        <section
+          style={{
+            backgroundColor: '#eff6ff',
+            borderRadius: '16px',
+            boxShadow: '0 20px 40px -24px rgb(37 99 235 / 0.3)',
+            overflow: 'hidden',
+            marginTop: '28px',
+            borderTop: '6px solid #3b82f6',
+          }}
+        >
+          <div style={{ padding: '18px 20px 0 20px' }}>
+            <h2 style={{ margin: 0, fontSize: '1.125rem', color: '#1d4ed8' }}>Single-select grid</h2>
+            <p style={{ margin: '4px 0 0', color: '#1e3a8a', fontSize: '0.9rem' }}>
+              Only one row stays selected at a time, even though the grid still uses checkbox selection UI.
+            </p>
+          </div>
+          <Grid
+            data={selectionRows}
+            columns={selectionColumns}
+            showHeader={true}
+            selectable={true}
+            selectionMode="single"
+            selectedIds={singleSelectedIds}
+            onSelectionChange={setSingleSelectedIds}
+            allowSorting={true}
+            allowReordering={true}
+            allowResizing={true}
+            theme="blue"
+            rowHeight={56}
+            pagination={{
+              total: selectionRows.length,
+              page: 1,
+              pageSize: 4,
             }}
           />
         </section>
