@@ -448,6 +448,44 @@ function App() {
           />
         </section>
 
+        <section
+          style={{
+            backgroundColor: '#f0fdf4',
+            borderRadius: '16px',
+            boxShadow: '0 20px 40px -24px rgb(34 197 94 / 0.3)',
+            overflow: 'hidden',
+            marginTop: '28px',
+            marginBottom: '28px',
+            borderTop: '6px solid #22c55e',
+          }}
+        >
+          <div style={{ padding: '18px 20px 0 20px' }}>
+            <h2 style={{ margin: 0, fontSize: '1.125rem', color: '#166534' }}>Filterable product grid</h2>
+            <p style={{ margin: '4px 0 0', color: '#15803d', fontSize: '0.9rem' }}>
+              New in 0.3.0: Built-in filtering capabilities with multiple column filter support.
+            </p>
+          </div>
+          <Grid
+            data={mockProducts}
+            columns={columns}
+            showHeader={true}
+            selectable={true}
+            selectedIds={selectedIds}
+            onSelectionChange={setSelectedIds}
+            allowSorting={true}
+            allowReordering={true}
+            allowResizing={true}
+            allowFiltering={true}
+            rowHeight={56}
+            theme="light"
+            pagination={{
+              total: mockProducts.length,
+              page: 1,
+              pageSize: 5,
+            }}
+          />
+        </section>
+
         <footer
           style={{
             marginTop: '24px',
